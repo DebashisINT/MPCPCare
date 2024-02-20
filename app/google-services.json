@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "950299543415",
+    "project_id": "mpcp-sales",
+    "storage_bucket": "mpcp-sales.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:950299543415:android:cb21374f1405223c398372",
+        "android_client_info": {
+          "package_name": "com.mpcpsalesfsm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiQMZAa9TYGXL_mbqWCoiiLw9OE-noRGw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
