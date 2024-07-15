@@ -1621,26 +1621,26 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
 
 //        searchView.openSearch()
 
+            LocalBroadcastManager.getInstance(this).registerReceiver(fcmClearDataReceiver, IntentFilter("FCM_ACTION_RECEIVER_CLEAR_DATA"))
+            LocalBroadcastManager.getInstance(this).registerReceiver(fcmReceiver, IntentFilter("FCM_ACTION_RECEIVER"))
+            LocalBroadcastManager.getInstance(this).registerReceiver(fcmReceiver_leave, IntentFilter("FCM_ACTION_RECEIVER_LEAVE"))
+            LocalBroadcastManager.getInstance(this).registerReceiver(fcmReceiver_leave_status, IntentFilter("FCM_ACTION_RECEIVER_LEAVE_STATUS"))
+            LocalBroadcastManager.getInstance(this).registerReceiver(fcmReceiver_quotation_approval, IntentFilter("FCM_ACTION_RECEIVER_quotation_approval"))
+            LocalBroadcastManager.getInstance(this).registerReceiver(fcm_ACTION_RECEIVER_LEAD, IntentFilter("FCM_ACTION_RECEIVER_LEAD"))
+            LocalBroadcastManager.getInstance(this).registerReceiver(idealLocReceiver, IntentFilter("IDEAL_LOC_BROADCAST"))
+            LocalBroadcastManager.getInstance(this).registerReceiver(attendNotiReceiver, IntentFilter("IDEAL_ATTEND_BROADCAST"))
+            LocalBroadcastManager.getInstance(this).registerReceiver(collectionAlertReceiver, IntentFilter("ALERT_RECIEVER_BROADCAST"))
+            LocalBroadcastManager.getInstance(this).registerReceiver(forceLogoutReceiver, IntentFilter("FORCE_LOGOUT_BROADCAST"))
+            LocalBroadcastManager.getInstance(this).registerReceiver(autoRevisit, IntentFilter("AUTO_REVISIT_BROADCAST"))
+            LocalBroadcastManager.getInstance(this).registerReceiver(offlineShopReceiver, IntentFilter("OFFLINE_SHOP_BROADCAST"))
+            LocalBroadcastManager.getInstance(this).registerReceiver(chatReceiver, IntentFilter("FCM_CHAT_ACTION_RECEIVER"))
+            LocalBroadcastManager.getInstance(this).registerReceiver(localeReceiver, IntentFilter("CHANGE_LOCALE_BROADCAST"))
+            LocalBroadcastManager.getInstance(this).registerReceiver(updateStatusReceiver, IntentFilter("FCM_STATUS_ACTION_RECEIVER"))
+            LocalBroadcastManager.getInstance(this).registerReceiver(homeLocReceiver, IntentFilter("HOME_LOC_ACTION_RECEIVER"))
+            LocalBroadcastManager.getInstance(this).registerReceiver(revisitReceiver, IntentFilter("REVISIT_REASON_BROADCAST"))
+            LocalBroadcastManager.getInstance(this).registerReceiver(updatePJP, IntentFilter("UPDATE_PJP_LIST"))
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(fcmClearDataReceiver, IntentFilter("FCM_ACTION_RECEIVER_CLEAR_DATA"))
-        LocalBroadcastManager.getInstance(this).registerReceiver(fcmReceiver, IntentFilter("FCM_ACTION_RECEIVER"))
-        LocalBroadcastManager.getInstance(this).registerReceiver(fcmReceiver_leave, IntentFilter("FCM_ACTION_RECEIVER_LEAVE"))
-        LocalBroadcastManager.getInstance(this).registerReceiver(fcmReceiver_leave_status, IntentFilter("FCM_ACTION_RECEIVER_LEAVE_STATUS"))
-        LocalBroadcastManager.getInstance(this).registerReceiver(fcmReceiver_quotation_approval, IntentFilter("FCM_ACTION_RECEIVER_quotation_approval"))
-        LocalBroadcastManager.getInstance(this).registerReceiver(fcm_ACTION_RECEIVER_LEAD, IntentFilter("FCM_ACTION_RECEIVER_LEAD"))
-        LocalBroadcastManager.getInstance(this).registerReceiver(idealLocReceiver, IntentFilter("IDEAL_LOC_BROADCAST"))
-        LocalBroadcastManager.getInstance(this).registerReceiver(attendNotiReceiver, IntentFilter("IDEAL_ATTEND_BROADCAST"))
-        LocalBroadcastManager.getInstance(this).registerReceiver(collectionAlertReceiver, IntentFilter("ALERT_RECIEVER_BROADCAST"))
-        LocalBroadcastManager.getInstance(this).registerReceiver(forceLogoutReceiver, IntentFilter("FORCE_LOGOUT_BROADCAST"))
-        LocalBroadcastManager.getInstance(this).registerReceiver(autoRevisit, IntentFilter("AUTO_REVISIT_BROADCAST"))
-        LocalBroadcastManager.getInstance(this).registerReceiver(offlineShopReceiver, IntentFilter("OFFLINE_SHOP_BROADCAST"))
-        LocalBroadcastManager.getInstance(this).registerReceiver(chatReceiver, IntentFilter("FCM_CHAT_ACTION_RECEIVER"))
-        LocalBroadcastManager.getInstance(this).registerReceiver(localeReceiver, IntentFilter("CHANGE_LOCALE_BROADCAST"))
-        LocalBroadcastManager.getInstance(this).registerReceiver(updateStatusReceiver, IntentFilter("FCM_STATUS_ACTION_RECEIVER"))
-        LocalBroadcastManager.getInstance(this).registerReceiver(homeLocReceiver, IntentFilter("HOME_LOC_ACTION_RECEIVER"))
-        LocalBroadcastManager.getInstance(this).registerReceiver(revisitReceiver, IntentFilter("REVISIT_REASON_BROADCAST"))
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(updatePJP, IntentFilter("UPDATE_PJP_LIST"))
 
         Handler().postDelayed(Runnable {
             if (Pref.isShowHomeLocReason && Pref.willShowHomeLocReason && (reasonDialog == null || !reasonDialog?.isVisible!!))
@@ -2214,7 +2214,8 @@ class DashboardActivity : BaseActivity(), View.OnClickListener, BaseNavigation, 
         //registerReceiver(gpsReceiver, networkIntentFilter);
         registerReceiver(gpsReceiver, networkIntentFilter);
 
-        registerReceiver(broadcastReceiver, filter)
+        //registerReceiver(broadcastReceiver, filter)
+        mContext.registerReceiver(broadcastReceiver, filter , Context.RECEIVER_EXPORTED)
         //registerReceiver(geoFenceBroadcast, IntentFilter())
         //checkToShowAddAttendanceAlert()
 
