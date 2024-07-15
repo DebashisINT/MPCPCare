@@ -47,8 +47,9 @@ class ScreenRecService: Service() {
 
                 }
 
-
-                DashboardFragment.tv_timer.text= String.format("%02d",ho)+":"+String.format("%02d",mi)+":"+String.format("%02d",sec)
+                //code start Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
+               // DashboardFragment.tv_timer.text= String.format("%02d",ho)+":"+String.format("%02d",mi)+":"+String.format("%02d",sec)
+                //code end Mantis- 27419 by puja screen recorder off 07.05.2024 v4.2.7
 
             }
         }

@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.amulyakhare.textdrawable.TextDrawable
 import com.amulyakhare.textdrawable.util.ColorGenerator
@@ -27,6 +28,7 @@ import com.mpcpsalesfsm.app.domain.AddShopDBModelEntity
 import com.mpcpsalesfsm.app.domain.OrderDetailsListEntity
 import com.mpcpsalesfsm.app.types.FragType
 import com.mpcpsalesfsm.app.utils.AppUtils
+import com.mpcpsalesfsm.app.utils.FTStorageUtils
 import com.mpcpsalesfsm.app.utils.Toaster
 import com.mpcpsalesfsm.features.dashboard.presentation.DashboardActivity
 import com.mpcpsalesfsm.features.location.LocationWizard
@@ -50,6 +52,8 @@ import kotlinx.android.synthetic.main.inflate_registered_shops.view.direction_vi
 import kotlinx.android.synthetic.main.inflate_registered_shops.view.high_value_month_tv
 import kotlinx.android.synthetic.main.inflate_registered_shops.view.highest_order_amount_tv
 import kotlinx.android.synthetic.main.inflate_registered_shops.view.iv_create_qr
+import kotlinx.android.synthetic.main.inflate_registered_shops.view.iv_createorder
+import kotlinx.android.synthetic.main.inflate_registered_shops.view.iv_range
 import kotlinx.android.synthetic.main.inflate_registered_shops.view.iv_sms
 import kotlinx.android.synthetic.main.inflate_registered_shops.view.iv_whatsapp
 import kotlinx.android.synthetic.main.inflate_registered_shops.view.last_visited_date_TV
@@ -63,6 +67,10 @@ import kotlinx.android.synthetic.main.inflate_registered_shops.view.ll_collectio
 import kotlinx.android.synthetic.main.inflate_registered_shops.view.ll_dd_name
 import kotlinx.android.synthetic.main.inflate_registered_shops.view.ll_distance
 import kotlinx.android.synthetic.main.inflate_registered_shops.view.ll_last_visit_age
+import kotlinx.android.synthetic.main.inflate_registered_shops.view.ll_nearby_shop_create_order_root
+import kotlinx.android.synthetic.main.inflate_registered_shops.view.ll_order
+import kotlinx.android.synthetic.main.inflate_registered_shops.view.ll_order_range
+import kotlinx.android.synthetic.main.inflate_registered_shops.view.ll_range
 import kotlinx.android.synthetic.main.inflate_registered_shops.view.ll_shop_code
 import kotlinx.android.synthetic.main.inflate_registered_shops.view.ll_shop_type
 import kotlinx.android.synthetic.main.inflate_registered_shops.view.ll_stock
@@ -108,6 +116,7 @@ import kotlinx.android.synthetic.main.inflate_registered_shops.view.tv_funnel_st
 import kotlinx.android.synthetic.main.inflate_registered_shops.view.tv_funnel_stage_header
 import kotlinx.android.synthetic.main.inflate_registered_shops.view.tv_last_visit_age
 import kotlinx.android.synthetic.main.inflate_registered_shops.view.tv_party_status
+import kotlinx.android.synthetic.main.inflate_registered_shops.view.tv_range
 import kotlinx.android.synthetic.main.inflate_registered_shops.view.tv_retailer_entity
 import kotlinx.android.synthetic.main.inflate_registered_shops.view.tv_retailer_entity_headerr
 import kotlinx.android.synthetic.main.inflate_registered_shops.view.tv_shop_code
@@ -1116,7 +1125,82 @@ class NearByShopsListAdapter(context: Context, list: List<AddShopDBModelEntity>,
             itemView.call_log_his_ll.setOnClickListener {
                 (context as DashboardActivity).loadFragment(FragType.ShopCallHisFrag, true, list[adapterPosition].shop_id)
             }
-            println("time_check NearByShopsListAdapterend")
+            println("sett_check ${Pref.ShowPartyWithGeoFence} ${Pref.ShowUserwisePartyWithGeoFence} ${Pref.ShowPartyWithCreateOrder} ${Pref.ShowUserwisePartyWithCreateOrder}")
+
+            itemView.ll_order_range.setOnClickListener {
+                Timber.d("tag_range_click")
+            }
+
+            if (Pref.ShowPartyWithGeoFence && Pref.ShowUserwisePartyWithGeoFence) {
+                try {
+                    itemView.ll_range.visibility = View.VISIBLE
+                    itemView.ll_order_range.visibility = View.VISIBLE
+                    var mRadious: Int = LocationWizard.NEARBY_RADIUS
+                    var location = Location("")
+                    location.latitude = Pref.current_latitude.toDouble()
+                    location.longitude = Pref.current_longitude.toDouble()
+                    var shopLocation = Location("")
+                    shopLocation.latitude = list[adapterPosition].shopLat
+                    shopLocation.longitude = list[adapterPosition].shopLong
+                    val isShopNearby = FTStorageUtils.checkShopPositionWithinRadious(
+                        location,
+                        shopLocation,
+                        mRadious
+                    )
+                    if (isShopNearby) {
+                        itemView.tv_range.text = "In Range"
+                        itemView.iv_range.setBackgroundResource(R.drawable.inrange);
+                        itemView.tv_range.setBackgroundDrawable(
+                            ContextCompat.getDrawable(
+                                context,
+                                R.drawable.right_rounded_corner_green_drawable
+                            )
+                        );
+                        itemView.ll_range.setBackgroundDrawable(
+                            ContextCompat.getDrawable(
+                                context,
+                                R.drawable.bacgreen_round_corner_1
+                            )
+                        );
+
+                    } else {
+                        itemView.tv_range.text = "Out Range"
+                        itemView.iv_range.setBackgroundResource(R.drawable.outrange)
+                        itemView.tv_range.setBackgroundDrawable(
+                            ContextCompat.getDrawable(
+                                context,
+                                R.drawable.right_rounded_corner_red_drawable
+                            )
+                        );
+                        itemView.ll_range.setBackgroundDrawable(
+                            ContextCompat.getDrawable(
+                                context,
+                                R.drawable.bacred_round_corner_1
+                            )
+                        );
+
+                    }
+                    println("rangeexception " + "success")
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    println("rangeexception " + e.message)
+                }
+            }
+            else{
+                itemView.ll_range.visibility = View.GONE
+            }
+            if (Pref.ShowPartyWithCreateOrder && Pref.ShowUserwisePartyWithCreateOrder){
+                itemView.ll_order.visibility = View.VISIBLE
+                itemView.ll_order_range.visibility = View.VISIBLE
+                itemView.iv_createorder.visibility = View.VISIBLE
+                itemView.ll_order.text = "Create Order"
+            }else{
+                itemView.ll_order.visibility = View.GONE
+            }
+            itemView.ll_nearby_shop_create_order_root.setOnClickListener {
+                listener.createITCOrderClick(list[adapterPosition])
+            }
 
         }
     }

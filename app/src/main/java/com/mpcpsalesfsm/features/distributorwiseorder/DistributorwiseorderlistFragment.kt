@@ -345,7 +345,8 @@ class DistributorwiseorderlistFragment : BaseFragment(), View.OnClickListener {
             val redFront = Font(Font.FontFamily.HELVETICA, 12f, Font.UNDERLINE or Font.BOLD, BaseColor.BLUE)
             var fontBlueBoldU: Font = Font(Font.FontFamily.HELVETICA, 12f, Font.UNDERLINE or Font.BOLD, BaseColor.ORANGE)
             //image add
-            val bm: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
+            //val bm: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
+            val bm: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.breezelogo)
             val bitmap = Bitmap.createScaledBitmap(bm, 50, 50, true);
             val stream = ByteArrayOutputStream()
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
@@ -545,6 +546,10 @@ class DistributorwiseorderlistFragment : BaseFragment(), View.OnClickListener {
                     try{
                     mrp = getString(R.string.rupee_symbol_with_space)+" "+tempProductObj!!.get(i).order_mrp+" "
                     discount = getString(R.string.rupee_symbol_with_space)+" "+tempProductObj!!.get(i).order_discount +" "
+                        // mrp fix Suman 22-02-2024 mantis id 0027271 begin
+                        mrp = getString(R.string.rupee_symbol_with_space)+" "+tempProductObj!!.get(j).order_mrp+" "
+                        discount = getString(R.string.rupee_symbol_with_space)+" "+tempProductObj!!.get(j).order_discount +" "
+                        // mrp fix Suman 22-02-2024 mantis id 0027271 end
                     }
                     catch (ex:Exception){
                         mrp = getString(R.string.rupee_symbol_with_space)+" "

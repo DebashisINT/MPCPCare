@@ -2,6 +2,7 @@ package com.mpcpsalesfsm.features.member.api
 
 import com.mpcpsalesfsm.app.Pref
 import com.mpcpsalesfsm.base.BaseResponse
+import com.mpcpsalesfsm.features.contacts.TeamAllListRes
 import com.mpcpsalesfsm.features.contacts.TeamListRes
 import com.mpcpsalesfsm.features.member.model.*
 import io.reactivex.Observable
@@ -19,6 +20,11 @@ class TeamRepo(val apiService: TeamApi) {
     fun teamListNew(userId: String, isFirstScreen: Boolean, isAllTeam: Boolean): Observable<TeamListRes> {
         Timber.d("PJP api teamList call")
         return apiService.getTeamListNew(Pref.session_token!!, userId, isFirstScreen, isAllTeam)
+    }
+
+    fun teamAllListNew(userId: String, isFirstScreen: Boolean, isAllTeam: Boolean): Observable<TeamAllListRes> {
+        Timber.d("PJP api teamList call")
+        return apiService.getTeamAllListNew(Pref.session_token!!, userId, isFirstScreen, isAllTeam)
     }
 
     fun teamShopList(userId: String, areaId: String): Observable<TeamShopListResponseModel> {

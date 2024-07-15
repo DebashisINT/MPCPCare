@@ -1,6 +1,6 @@
 <resources>
     <!--<string name="app_name">Field Tracking System</string>-->
-    <string name="app_name" translatable="false">MPCP SALES</string>
+    <string name="app_name" translatable="false">Breeze-MPCP Care</string>
     <string name="blank" translatable="false"></string>
     <string name="enter_a_title" translatable="false">Enter a title</string>
     <string name="entry_details_default_text" translatable="false">Entry Details!</string>
@@ -9,10 +9,11 @@
     <string name="terms_conditions" translatable="false">Terms &amp; Conditions</string>
     <string name="ideal_loc" translatable="false">IDLE Alert</string>
     <string name="net_status" translatable="false">App current status:</string>
-
+    <string name="select_products" translatable="false">Select Product(s)</string>
     <!--Map Key-->
     <!--<string name="MAP_ProjectAPIKey">AIzaSyBRrqsLZFqThqM8uxw_k94pZMbv3-3h0dM</string>-->
-    <string name="MAP_ProjectAPIKey" translatable="false">AIzaSyAQDLR_I5R4JdedfnSuGjgXbkVpAhANHNY</string>
+    <!--<string name="MAP_ProjectAPIKey" translatable="false">AIzaSyCbYMZjnt8T6yivYfIa4_R9oy-L3SIYyrQ</string>-->
+    <string name="MAP_ProjectAPIKey" translatable="false">AIzaSyDbsL6dMddy2DsjsVzhr_qJe-jWoBLcdLo</string>
     <string name="facebook_app_id" translatable="false">260734547001450</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb260734547001450</string>
 
@@ -45,6 +46,7 @@
     <string name="shop_detail" translatable="false">Shop Details</string>
     <string name="customer_details" translatable="false">Customer Details</string>
     <string name="order_detail" translatable="false">Order Details</string>
+    <string name="activity_detail" translatable="false">Activity Details</string>
     <string name="view_yesterdays_route" translatable="false">View Yesterday\'s Route</string>
     <string name="assigned_areas" translatable="false">Assigned Areas</string>
     <string name="my_registered_shop" translatable="false">My Registered Shops</string>
@@ -148,10 +150,12 @@
     <string name="new_conversation" translatable="false">New Conversation</string>
     <string name="scan" translatable="false">Scan QR Code</string>
     <string name="nearby_user" translatable="false">Nearby Team Members</string>
+    <string name="leaderboard" translatable="false">Leaderboard</string>
     <string name="beat_list" translatable="false">Beat List</string>
     <string name="device_info" translatable="false">Device Info.</string>
     <string name="permission_info" translatable="false">Permission Info.</string>
     <string name="micro_learning" translatable="false">Micro Learning</string>
+    <string name="my_learning" translatable="false">My Learning</string>
     <string name="training_contents" translatable="false">Training Contents</string>
     <string name="My_Jobs" translatable="false">My Jobs</string>
     <string name="service_history" translatable="false">Service History</string>
@@ -436,11 +440,11 @@
 
 
     <!--mpcpsalesfsm-->
-    <string name="mpcpsalesfsm_user_name" translatable="false">Mr. Kinsuk Roy</string>
-    <string name="mpcpsalesfsm_login" translatable="false">Logged in at 10:55 AM</string>
-    <string name="mpcpsalesfsm_location" translatable="false">You have covered the distance of 3 KM in last hour </string>
-    <string name="mpcpsalesfsm_shops" translatable="false">You have visited 2 shops</string>
-    <string name="mpcpsalesfsm_time" translatable="false">10:30 AM</string>
+    <string name="sample_user_name" translatable="false">Mr. Kinsuk Roy</string>
+    <string name="sample_login" translatable="false">Logged in at 10:55 AM</string>
+    <string name="sample_location" translatable="false">You have covered the distance of 3 KM in last hour </string>
+    <string name="sample_shops" translatable="false">You have visited 2 shops</string>
+    <string name="sample_time" translatable="false">10:30 AM</string>
 
     <!--Change Password-->
     <string name="old_pwd" translatable="false">Old Password</string>
@@ -496,6 +500,7 @@
     <string name="functionality_disabled" translatable="false">Feature coming soon&#8230;</string>
     <!--<string name="functionality_disabled">Functionality Disabled</string>-->
     <string name="ok" translatable="false">Ok</string>
+    <string name="i_agree" translatable="false">I Agree</string>
     <string name="cancel" translatable="false">Cancel</string>
     <string name="confirm_logout" translatable="false">Select Ok to confirm Logout.</string>
     <string name="alert_logout" translatable="false">Please logout to continue.</string>
@@ -503,8 +508,8 @@
     <string name="capture_shop_image" translatable="false">Capture an image of shop</string>
     <string name="welcome" translatable="false">Welcome</string>
     <string name="vikas_malhotra" translatable="false">Vikash Malhotra</string>
-    <string name="dashboard_mpcpsalesfsm_item" translatable="false">10.30\nAM</string>
-    <string name="dashboard_mpcpsalesfsm_address" translatable="false">SDF Building, GP Block, Saltlake </string>
+    <string name="dashboard_sample_item" translatable="false">10.30\nAM</string>
+    <string name="dashboard_sample_address" translatable="false">SDF Building, GP Block, Saltlake </string>
     <string name="ten" translatable="false">10</string>
     <string name="five" translatable="false">5</string>
     <string name="organization_name" translatable="false">Nordusk</string>
@@ -583,6 +588,10 @@
     <string name="valid_sddress" translatable="false">Please enter a valid address</string>
     <string name="no_internet" translatable="false">Please check your internet connection.</string>
     <string name="alert_nolocation" translatable="false">Please enable your device location.</string>
+    <string name="branch_select" translatable="false">Please select Branch.</string>
+    <string name="opt_sucs" translatable="false">Opportunity saved successfully</string>
+    <string name="opt_updt" translatable="false">Opportunity updated successfully</string>
+    <string name="no_branch" translatable="false">No branch here</string>
     <string name="something_went_wrong" translatable="false">Something went wrong. Please try again later</string>
     <string name="something_went_wrong_new" translatable="false">Something went wrong. Please try again later..</string>
     <string name="something_went_wrong1" translatable="false">Something went wrong. Please try again later...............</string>
@@ -1436,6 +1445,9 @@
     <string name="loc_msg_new" translatable="false">Field Sales Management App collects location data after you open and login into the App,\u0020to identify nearby Parties location even when the app is running in the background and not in use.This app collects location data to enable nearby shops, GPS route,
         even when the app is closed or not in use.</string>
 
+    <string name="loc_msg_new_new" translatable="false">Field Sales Management App collects location data after you open and login into the App, to identify nearby Parties location even when the app is running in the background and not in use.This app collects location data to enable nearby shops, GPS route,
+ even when the app is closed or not in use.Reimbursement is issued with distance traveled for specific GPS route.
+ \nThis is a core functionality of this app.</string>
 
     <!--My Jobs-->
     <string name="view_details" translatable="false">View Details</string>
@@ -1508,6 +1520,10 @@
     <string name="Start" translatable="false">START</string>
     <string name="dd_visit" translatable="false">Point Visit</string>
     <string name="new_order_scr_list" translatable="false">Order  Details</string>
+    <string name="new_oppt_scr_list" translatable="false">Opportunities</string>
+    <!--
+    <string name="new_oppt_scr_add" translatable="false">Add Opportunity</string>
+-->
 
 
     <string name="error_message_remarks_manadatory" translatable="false">Please put the remarks</string>
@@ -1584,10 +1600,10 @@
     <string name="historys" translatable="false">Historys</string>
     <!--<string name="firebase_key" translatable="false">key=AAAAIoWfCpc:APA91bEMOPyfjsyziPC1WYJiPHjzdmTQJmAOKP0fM24iXI9BgrmyhH4uLY6Jd-6Lpjp8mvSdpSp-zm20ApTOYQ3Ean4m6LicJ5CoECS_v5u2PUAwA8E6FLsu2ZC6_WxuSYnTTLzlUi4E</string>-->
 
-    <string name="PART_1" translatable="false">AAAA3UJER3c:APA91bF3qokVjA_ZF0p1SAJl2MyLlfiVLXQcpuS9-</string>
-    <string name="PART_2" translatable="false">QMMI31DA_ffI2S_5zXyyHeryegBjCKXCm</string>
-    <string name="PART_3" translatable="false">ORW8k-FBxMVLpnT2BnCPllwfy9ZVNifRFRAp</string>
-    <string name="PART_4" translatable="false">OpVboACc5e09ZyQjFaX4s2cj1FcItO</string>
+    <string name="PART_1" translatable="false">key=AAAA8_ptc9A:APA91bGhMaxl_Mm811bpvNExTIyZZz16krSTnC</string>
+    <string name="PART_2" translatable="false">Ap1RpbRKV8hZuIh9gsI6svxMvZO74WaZl3piBPH</string>
+    <string name="PART_3" translatable="false">Jzp2N3NN3JRS8a150BAmyLnwqa7nJUFay</string>
+    <string name="PART_4" translatable="false">_kxNm11dQfdDCl00QUPncGCKq1kPYH</string>
 
     <string name="GenderTextNewOrd" translatable="false">Gender</string>
     <string name="ProductTextNewOrd" translatable="false">Product Type</string>

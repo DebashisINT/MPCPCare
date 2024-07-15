@@ -13,6 +13,9 @@ import com.mpcpsalesfsm.features.addshop.model.AddLogReqData
 import com.mpcpsalesfsm.features.addshop.model.AddShopRequestData
 import com.mpcpsalesfsm.features.addshop.model.AddShopResponse
 import com.mpcpsalesfsm.features.addshop.model.LogFileResponse
+import com.mpcpsalesfsm.features.addshop.model.UpdateAddrReq
+import com.mpcpsalesfsm.features.addshop.model.UpdateAddressShop
+import com.mpcpsalesfsm.features.contacts.AutoMailDtls
 import com.mpcpsalesfsm.features.contacts.CallHisDtls
 import com.mpcpsalesfsm.features.contacts.CompanyReqData
 import com.mpcpsalesfsm.features.contacts.ContactMasterRes
@@ -80,8 +83,16 @@ class EditShopRepo(val apiService: EditShopApi) {
         return apiService.callLogListSaveApi(callLogHisSave)
     }
 
+    fun callUpdateAdressShopSaveApi(updateAddrReq: UpdateAddrReq?): Observable<BaseResponse> {
+        return apiService.callUpdateAddressSaveApi(updateAddrReq)
+    }
+
     fun callCallListHisAPI(user_id: String): Observable<CallHisDtls> {
         return apiService.callCallListHisAPI(user_id)
+    }
+
+    fun autoMailDtls(user_id: String): Observable<AutoMailDtls> {
+        return apiService.autoMailDtlsAPI(user_id)
     }
 
     fun addShopWithImage(shop: AddShopRequestData, shop_image: String?, context: Context): Observable<AddShopResponse> {

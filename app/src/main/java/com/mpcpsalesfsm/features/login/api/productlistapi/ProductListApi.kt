@@ -2,15 +2,21 @@ package com.mpcpsalesfsm.features.login.api.productlistapi
 
 import com.mpcpsalesfsm.app.NetworkConstant
 import com.mpcpsalesfsm.app.domain.ProductListEntity
+import com.mpcpsalesfsm.base.BaseResponse
 import com.mpcpsalesfsm.features.login.model.productlistmodel.ProductListOfflineResponseModel
 import com.mpcpsalesfsm.features.login.model.productlistmodel.ProductListOfflineResponseModelNew
 import com.mpcpsalesfsm.features.login.model.productlistmodel.ProductListResponseModel
 import com.mpcpsalesfsm.features.login.model.productlistmodel.ProductRateListResponseModel
+import com.mpcpsalesfsm.features.orderITC.GetOrderHistory
+import com.mpcpsalesfsm.features.orderITC.GetProductRateReq
+import com.mpcpsalesfsm.features.orderITC.GetProductReq
+import com.mpcpsalesfsm.features.orderITC.SyncOrd
 import com.mpcpsalesfsm.features.viewAllOrder.orderOptimized.ProductRateOnlineListResponseModel
 import io.reactivex.Observable
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
@@ -40,6 +46,21 @@ interface ProductListApi {
     @FormUrlEncoded
     @POST("ProductList/OfflineProductRate")
     fun getOfflineProductRateListNew(@Field("session_token") session_token: String, @Field("user_id") user_id: String): Observable<ProductListOfflineResponseModelNew>
+
+    @POST("ITCOrderWithProductDetail/ITCOrderWithProductDetailSave")
+    fun syncProductListITC(@Body addOrder: SyncOrd): Observable<BaseResponse>
+
+    @FormUrlEncoded
+    @POST("ProductList/ITCProdMastList")
+    fun getProductListITC(@Field("session_token") session_token: String, @Field("user_id") user_id: String): Observable<GetProductReq>
+
+    @FormUrlEncoded
+    @POST("ProductList/ITCProdRateList")
+    fun getProductRateListITC(@Field("session_token") session_token: String, @Field("user_id") user_id: String): Observable<GetProductRateReq>
+
+    @FormUrlEncoded
+    @POST("ITCOrderWithProductDetail/ITCListForOrderedProduct")
+    fun getOrderHistoryApi( @Field("user_id") user_id: String): Observable<GetOrderHistory>
 
 
     /**

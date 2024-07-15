@@ -151,7 +151,7 @@ class SchedulerViewFrag : BaseFragment(), View.OnClickListener {
 
         mFab.setCustomClickListener {
             var templateList = AppDatabase.getDBInstance()?.scheduleTemplateDao()?.getAllExceptManually() as ArrayList<ScheduleTemplateEntity>
-            if ( Pref.storeGmailId==null || Pref.storeGmailPassword==null){
+            if ( (Pref.storeGmailId==null || Pref.storeGmailPassword==null) && false){
                 val simpleDialog = Dialog(mContext)
                 simpleDialog.setCancelable(false)
                 simpleDialog.getWindow()!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -192,7 +192,7 @@ class SchedulerViewFrag : BaseFragment(), View.OnClickListener {
         if((AppDatabase.getDBInstance()?.scheduleTemplateDao()?.getAll() as ArrayList<ScheduleTemplateEntity>).size == 0){
             var obj = ScheduleTemplateEntity()
             obj.template_id = Pref.user_id+System.currentTimeMillis().toString()
-            obj.template_name = "Send Manually"
+            obj.template_name = "Manual Template"
             obj.template_desc = ""
             AppDatabase.getDBInstance()?.scheduleTemplateDao()?.insert(obj)
         }

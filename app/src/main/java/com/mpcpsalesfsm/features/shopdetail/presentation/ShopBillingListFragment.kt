@@ -241,8 +241,10 @@ class ShopBillingListFragment : BaseFragment() {
                                     val random = Random()
                                     val m = random.nextInt(9999 - 1000) + 1000
 
-                                    //collectionDetails.collection_id = Pref.user_id + "_" + m /*+ "_" + System.currentTimeMillis().toString()*/
-                                    collectionDetails.collection_id = Pref.user_id + "c" + m
+                                    // start fix collection not sync issue sometimes puja 05-04-2024 mantis id 0027352 v4.2.6
+                                    collectionDetails.collection_id = Pref.user_id + "_" + m + "_" + System.currentTimeMillis().toString()
+                                    //collectionDetails.collection_id = Pref.user_id + "c" + m
+                                    // end fix collection not sync issue sometimes puja 05-04-2024 mantis id 0027352 v4.2.6
                                     collectionDetails.shop_id = mAddShopDataObj?.shop_id
                                     collectionDetails.date = date //AppUtils.getCurrentDate()
                                     collectionDetails.only_time = AppUtils.getCurrentTime()  //AppUtils.getCurrentDate()
@@ -752,6 +754,17 @@ class ShopBillingListFragment : BaseFragment() {
             shopDurationData.multi_contact_name = shopActivity.multi_contact_name
             shopDurationData.multi_contact_number = shopActivity.multi_contact_number
 
+            // Suman 06-05-2024 Suman SyncActivity update mantis 27335  begin
+            try {
+                var shopOb = AppDatabase.getDBInstance()!!.addShopEntryDao().getShopByIdN(shopDurationData.shop_id)
+                shopDurationData.shop_lat=shopOb.shopLat.toString()
+                shopDurationData.shop_long=shopOb.shopLong.toString()
+                shopDurationData.shop_addr=shopOb.address.toString()
+            }catch (ex:Exception){
+                ex.printStackTrace()
+            }
+            // Suman 06-05-2024 Suman SyncActivity update mantis 27335  end
+
             shopDataList.add(shopDurationData)
         }
         else {
@@ -849,6 +862,18 @@ class ShopBillingListFragment : BaseFragment() {
                 // 1.0 ShopBillingListFragment  AppV 4.0.6  multiple contact Data added on Api called
                 shopDurationData.multi_contact_name = shopActivity.multi_contact_name
                 shopDurationData.multi_contact_number = shopActivity.multi_contact_number
+
+                // Suman 06-05-2024 Suman SyncActivity update mantis 27335  begin
+                try {
+                    var shopOb = AppDatabase.getDBInstance()!!.addShopEntryDao().getShopByIdN(shopDurationData.shop_id)
+                    shopDurationData.shop_lat=shopOb.shopLat.toString()
+                    shopDurationData.shop_long=shopOb.shopLong.toString()
+                    shopDurationData.shop_addr=shopOb.address.toString()
+                }catch (ex:Exception){
+                    ex.printStackTrace()
+                }
+                // Suman 06-05-2024 Suman SyncActivity update mantis 27335  end
+
                 shopDataList.add(shopDurationData)
             }
         }

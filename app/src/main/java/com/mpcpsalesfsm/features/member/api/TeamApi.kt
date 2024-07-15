@@ -3,6 +3,7 @@ package com.mpcpsalesfsm.features.member.api
 import com.mpcpsalesfsm.app.NetworkConstant
 import com.mpcpsalesfsm.base.BaseResponse
 import com.mpcpsalesfsm.features.addshop.model.AreaListResponseModel
+import com.mpcpsalesfsm.features.contacts.TeamAllListRes
 import com.mpcpsalesfsm.features.contacts.TeamListRes
 import com.mpcpsalesfsm.features.member.model.*
 import io.reactivex.Observable
@@ -28,6 +29,11 @@ interface TeamApi {
     @POST("UserHierarchy/HierarchyMemberList")
     fun getTeamListNew(@Field("session_token") session_token: String, @Field("user_id") user_id: String,
                     @Field("isFirstScreen") isFirstScreen: Boolean, @Field("isAllTeam") isAllTeam: Boolean): Observable<TeamListRes>
+
+    @FormUrlEncoded
+    @POST("UserHierarchy/HierarchyMemberList")
+    fun getTeamAllListNew(@Field("session_token") session_token: String, @Field("user_id") user_id: String,
+                       @Field("isFirstScreen") isFirstScreen: Boolean, @Field("isAllTeam") isAllTeam: Boolean): Observable<TeamAllListRes>
 
     @FormUrlEncoded
     @POST("UserHierarchy/HierarchyShopList")

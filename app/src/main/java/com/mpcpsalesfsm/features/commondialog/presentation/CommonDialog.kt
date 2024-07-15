@@ -2,6 +2,7 @@ package com.mpcpsalesfsm.features.commondialog.presentation
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
 import com.google.android.material.textfield.TextInputLayout
 import androidx.fragment.app.DialogFragment
 import androidx.appcompat.widget.AppCompatImageView
@@ -36,8 +37,10 @@ class CommonDialog : DialogFragment(), View.OnClickListener {
     private var editableData = ""
 
     companion object {
-
-        private lateinit var mHeader: String
+        // code start by puja 10.04.2024 mantis id - 27333 v4.2.6
+        //private lateinit var mHeader: String
+        private var mHeader: String = ""
+        // code end by puja 10.04.2024 mantis id - 27333 v4.2.6
         private lateinit var mTitle: String
         private lateinit var mLeftBtn: String
         private lateinit var mRightBtn: String
@@ -240,11 +243,17 @@ class CommonDialog : DialogFragment(), View.OnClickListener {
             }
             R.id.ok_TV -> {
 //              dialogOk.isSelected=true
+
                 dismiss()
                 if (!TextUtils.isEmpty(et_text.text.toString().trim()))
                     editableData = et_text.text.toString().trim()
 
                 mListener.onRightClick(editableData)
+                dialogOk.isEnabled = false
+
+                Handler().postDelayed(Runnable {
+                    dialogOk.isEnabled = true
+                },10000)
             }
             R.id.iv_close_icon -> {
                 closeClickListener?.onCloseClick()

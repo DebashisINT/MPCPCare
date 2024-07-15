@@ -62,7 +62,7 @@
                             android:paddingLeft="@dimen/_17sdp"
                             android:paddingRight="@dimen/_17sdp"
                             android:paddingTop="@dimen/_5sdp"
-                            android:text="@string/mpcpsalesfsm_user_name"
+                            android:text="@string/sample_user_name"
                             android:textColor="@color/menu_text_color"
                             android:textSize="@dimen/_14sdp" />
 
@@ -75,7 +75,7 @@
                         android:drawablePadding="@dimen/_15sdp"
                         android:gravity="center"
                         android:paddingBottom="@dimen/_7sdp"
-                        android:text="@string/mpcpsalesfsm_login"
+                        android:text="@string/sample_login"
                         android:textColor="@color/menu_text_color"
                         android:textSize="@dimen/_10sdp"
                         android:visibility="gone" />
@@ -392,7 +392,7 @@
                     android:paddingTop="@dimen/_15sdp"
                     android:paddingRight="@dimen/_17sdp"
                     android:paddingBottom="@dimen/_7sdp"
-                    android:text="Contacts"
+                    android:text="CRM"
                     android:textColor="@color/lightest_gray"
                     android:textSize="@dimen/_12sdp"
                     android:visibility="visible" />
@@ -502,6 +502,22 @@
                     android:textColor="@color/lightest_gray"
                     android:textSize="@dimen/_12sdp"
                     android:visibility="visible" />
+
+                <com.mpcpsalesfsm.widgets.AppCustomTextView
+                    android:id="@+id/leaderBoard_TV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/_15sdp"
+                    android:drawableStart="@drawable/ic_team_icon"
+                    android:paddingBottom="@dimen/_7sdp"
+                    android:paddingLeft="@dimen/_17sdp"
+                    android:paddingRight="@dimen/_17sdp"
+                    android:paddingTop="@dimen/_15sdp"
+                    android:text="@string/leaderboard"
+                    android:textColor="@color/lightest_gray"
+                    android:textSize="@dimen/_12sdp"
+                    android:visibility="visible" />
+
 
                 <com.mpcpsalesfsm.widgets.AppCustomTextView
                     android:id="@+id/activity_TV"
@@ -1118,7 +1134,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawablePadding="@dimen/_15sdp"
-                    android:drawableStart="@drawable/ic_chat"
+                    android:drawableStart="@drawable/ic_chat_1"
                     android:paddingBottom="@dimen/_7sdp"
                     android:paddingLeft="@dimen/_17sdp"
                     android:paddingRight="@dimen/_17sdp"
@@ -1188,6 +1204,21 @@
                     android:textSize="@dimen/_12sdp"
                     android:visibility="visible" />
 
+                <com.mpcpsalesfsm.widgets.AppCustomTextView
+                    android:id="@+id/my_learning_TV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/_15sdp"
+                    android:drawableStart="@drawable/ic_machine_learning"
+                    android:paddingBottom="@dimen/_7sdp"
+                    android:paddingLeft="@dimen/_17sdp"
+                    android:paddingRight="@dimen/_17sdp"
+                    android:paddingTop="@dimen/_15sdp"
+                    android:text="LMS"
+                    android:textColor="@color/lightest_gray"
+                    android:textSize="@dimen/_12sdp"
+                    android:visibility="gone" />
+
 
                 <com.mpcpsalesfsm.widgets.AppCustomTextView
                     android:id="@+id/anydesk_info_TV"
@@ -1202,7 +1233,7 @@
                     android:text=""
                     android:textColor="@color/lightest_gray"
                     android:textSize="@dimen/_12sdp"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
 
                 <com.mpcpsalesfsm.widgets.AppCustomTextView
                     android:id="@+id/screen_record_info_TV"
@@ -1217,7 +1248,7 @@
                     android:text=""
                     android:textColor="@color/lightest_gray"
                     android:textSize="@dimen/_12sdp"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
 
                 <com.mpcpsalesfsm.widgets.AppCustomTextView
                     android:id="@+id/check_custom_status_TV"

@@ -96,6 +96,7 @@ import kotlin.collections.ArrayList
 // 3.0 BaseActivity AppV 4.0.7  Saheli    20/02/2023 mantis gps with list issue 0025685
 // 4.0 BaseActivity AppV 4.0.7 Saheli    02/03/2023 Timber Log Implementation
 // 5.0 BaseActivity AppV 4.2.2 tufan    20/09/2023 FSSAI Lic No Implementation 26813
+// Rev 6.0 Suman 06-05-2024 Suman BaseActivity mantis 27335
 open class BaseActivity : AppCompatActivity(), GpsStatusDetector.GpsStatusDetectorCallBack {
 
     private val mRegistry = LifecycleRegistry(this)
@@ -1204,12 +1205,8 @@ fun serviceStatusActionable() {
             return
         }
         val serviceLauncher = Intent(this, LocationFuzedService::class.java)
-        Timber.d("TAG_CHECK_LOC_SERVICE_STATUS")
-
         if (Pref.user_id != null && Pref.user_id!!.isNotEmpty()) {
-
             Timber.e("MID: 26980 in serviceStatusActionable method if user_id is not null")
-
             startMonitorService()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
@@ -1690,6 +1687,17 @@ val revisitStatusList : MutableList<ShopRevisitStatusRequestData> = ArrayList()
             shopDurationData.distFromProfileAddrKms = shopActivity.distFromProfileAddrKms
             shopDurationData.stationCode = shopActivity.stationCode
 
+            // Rev 6.0 Suman 06-05-2024 Suman BaseActivity mantis 27335  begin
+            try {
+                var shopOb = AppDatabase.getDBInstance()!!.addShopEntryDao().getShopByIdN(shopDurationData.shop_id)
+                shopDurationData.shop_lat=shopOb.shopLat.toString()
+                shopDurationData.shop_long=shopOb.shopLong.toString()
+                shopDurationData.shop_addr=shopOb.address.toString()
+            }catch (ex:Exception){
+                ex.printStackTrace()
+            }
+            // Rev 6.0 Suman 06-05-2024 Suman BaseActivity mantis 27335  end
+
             shopDataList.add(shopDurationData)
 
 
@@ -1923,6 +1931,17 @@ val revisitStatusList : MutableList<ShopRevisitStatusRequestData> = ArrayList()
         // 1.0 BaseActivity AppV 4.0.6  multiple contact Data added on Api called
         shopDurationData.multi_contact_name = shopActivity.multi_contact_name
         shopDurationData.multi_contact_number = shopActivity.multi_contact_number
+
+        // Rev 6.0 Suman 06-05-2024 Suman BaseActivity mantis 27335  begin
+        try {
+            var shopOb = AppDatabase.getDBInstance()!!.addShopEntryDao().getShopByIdN(shopDurationData.shop_id)
+            shopDurationData.shop_lat=shopOb.shopLat.toString()
+            shopDurationData.shop_long=shopOb.shopLong.toString()
+            shopDurationData.shop_addr=shopOb.address.toString()
+        }catch (ex:Exception){
+            ex.printStackTrace()
+        }
+        // Rev 6.0 Suman 06-05-2024 Suman BaseActivity mantis 27335  end
 
         shopDataList.add(shopDurationData)
 

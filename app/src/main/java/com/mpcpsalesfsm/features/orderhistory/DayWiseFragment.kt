@@ -1,14 +1,18 @@
 package com.mpcpsalesfsm.features.orderhistory
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
@@ -25,6 +29,7 @@ import com.mpcpsalesfsm.app.Pref
 import com.mpcpsalesfsm.app.utils.AppUtils
 import com.mpcpsalesfsm.app.utils.AppUtils.Companion.getFormattedDate
 import com.mpcpsalesfsm.app.utils.FTStorageUtils
+import com.mpcpsalesfsm.app.utils.PermissionUtils
 import com.mpcpsalesfsm.base.BaseResponse
 import com.mpcpsalesfsm.base.presentation.BaseActivity
 import com.mpcpsalesfsm.base.presentation.BaseFragment
@@ -57,6 +62,7 @@ import kotlin.collections.ArrayList
 /**
  * Created by Pratishruti on 01-11-2017.
  */
+// 1.0 NewOrderListFragment AppV 4.2.6 Puja 23-04-2024 issue of sharing mantis 0027395
 class DayWiseFragment : BaseFragment(), View.OnClickListener {
 
     private lateinit var pickDate: AppCustomTextView
@@ -450,6 +456,11 @@ class DayWiseFragment : BaseFragment(), View.OnClickListener {
         tv_share_logs.setOnClickListener(this)
         tv_sync_all.setOnClickListener(this)
         tv_share_pdf.setOnClickListener(this)
+        if(Pref.IsShowCustomerLocationShare){
+            tv_share_logs.visibility = View.VISIBLE
+        }else{
+            tv_share_logs.visibility = View.GONE
+        }
     }
 
     @SuppressLint("WrongConstant")
@@ -582,13 +593,28 @@ class DayWiseFragment : BaseFragment(), View.OnClickListener {
 
         val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() +"/mpcpsalesfsmApp/TIMELINE/"
 
+        var pathNew = ""
+
         val dir = File(path)
         if (!dir.exists()) {
             dir.mkdirs()
         }
 
         try {
-            PdfWriter.getInstance(document, FileOutputStream(path + fileName + ".pdf"))
+            try {
+                PdfWriter.getInstance(document, FileOutputStream(path + fileName + ".pdf"))
+            }catch (ex:Exception){
+                ex.printStackTrace()
+
+                pathNew = mContext.filesDir.toString() + "/" + fileName+".pdf"
+                //val file = File(mContext.filesDir.toString() + "/" + fileName)
+                PdfWriter.getInstance(document, FileOutputStream(pathNew))
+            }
+
+            //test code begin
+            //var pdfWriter : PdfWriter = PdfWriter.getInstance(document, FileOutputStream(p))
+            //test code end
+
             document.open()
 
 
@@ -598,15 +624,18 @@ class DayWiseFragment : BaseFragment(), View.OnClickListener {
             val grayFront = Font(Font.FontFamily.HELVETICA, 8f, Font.NORMAL, BaseColor.GRAY)
 
             //image add
-            val bm: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
-            val bitmap = Bitmap.createScaledBitmap(bm, 50, 50, true);
+            //code start by Puja mantis-0027395 date-23.04.24 v4.2.6
+            //val bm: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
+            val bm: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.breezelogo)
+            //code end by Puja mantis-0027395 date-23.04.24 v4.2.6
+            val bitmap = Bitmap.createScaledBitmap(bm, 80, 80, true);
             val stream = ByteArrayOutputStream()
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
             var img: Image? = null
             val byteArray: ByteArray = stream.toByteArray()
             try {
                 img = Image.getInstance(byteArray)
-                img.scaleToFit(90f, 90f)
+                img.scaleToFit(110f, 110f)
                 img.scalePercent(70f)
                 img.alignment = Image.ALIGN_LEFT
             } catch (e: BadElementException) {
@@ -709,15 +738,22 @@ class DayWiseFragment : BaseFragment(), View.OnClickListener {
             document.close()
 
             var sendingPath = path + fileName + ".pdf"
+            if(!pathNew.equals("")){
+                sendingPath = pathNew
+            }
             if (!TextUtils.isEmpty(sendingPath)) {
                 try {
-                    val shareIntent = Intent(Intent.ACTION_SEND)
-                    val fileUrl = Uri.parse(sendingPath)
-                    val file = File(fileUrl.path)
-                    val uri: Uri = FileProvider.getUriForFile(mContext, mContext.applicationContext.packageName.toString() + ".provider", file)
-                    shareIntent.type = "image/png"
-                    shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
-                    startActivity(Intent.createChooser(shareIntent, "Share pdf using"))
+
+                    Handler().postDelayed(Runnable {
+                        val shareIntent = Intent(Intent.ACTION_SEND)
+                        val fileUrl = Uri.parse(sendingPath)
+                        val file = File(fileUrl.path)
+                        val uri: Uri = FileProvider.getUriForFile(mContext, mContext.applicationContext.packageName.toString() + ".provider", file)
+                        shareIntent.type = "image/png"
+                        shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
+                        startActivity(Intent.createChooser(shareIntent, "Share pdf using"))
+                    }, 500)
+
                 } catch (e: Exception) {
                     e.printStackTrace()
                     (mContext as DashboardActivity).showSnackMessage(getString(R.string.something_went_wrong1))
@@ -726,6 +762,7 @@ class DayWiseFragment : BaseFragment(), View.OnClickListener {
         }
         catch (ex: Exception){
             ex.printStackTrace()
+            Timber.d("tag_share_err ${ex.message}")
             (mContext as DashboardActivity).showSnackMessage(getString(R.string.something_went_wrong))
         }
     }

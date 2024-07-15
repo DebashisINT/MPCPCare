@@ -5,6 +5,9 @@ import com.mpcpsalesfsm.base.BaseResponse
 import com.mpcpsalesfsm.features.addshop.model.AddShopRequestData
 import com.mpcpsalesfsm.features.addshop.model.AddShopResponse
 import com.mpcpsalesfsm.features.addshop.model.LogFileResponse
+import com.mpcpsalesfsm.features.addshop.model.UpdateAddrReq
+import com.mpcpsalesfsm.features.addshop.model.UpdateAddressShop
+import com.mpcpsalesfsm.features.contacts.AutoMailDtls
 import com.mpcpsalesfsm.features.contacts.CallHisDtls
 import com.mpcpsalesfsm.features.contacts.CompanyReqData
 import com.mpcpsalesfsm.features.contacts.ContactMasterRes
@@ -82,9 +85,16 @@ interface EditShopApi {
     @POST("CallLogInformations/CallLogListSave")
     fun callLogListSaveApi(@Body callLogHisSave: CallHisDtls?): Observable<BaseResponse>
 
+    @POST("Shoplist/ITCShopAddressEdit")
+    fun callUpdateAddressSaveApi(@Body updateAddrReq: UpdateAddrReq?): Observable<BaseResponse>
+
     @FormUrlEncoded
     @POST("CallLogInformations/CallLogList")
     fun callCallListHisAPI(@Field("user_id") user_id: String): Observable<CallHisDtls>
+
+    @FormUrlEncoded
+    @POST("SendAutoMail/SendAutoMailInfo")
+    fun autoMailDtlsAPI(@Field("user_id") user_id: String): Observable<AutoMailDtls>
 
     /**
      * Companion object to create the GithubApiService

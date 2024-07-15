@@ -2089,7 +2089,10 @@ class AddShopFragment : BaseFragment(), View.OnClickListener {
                             progress_wheel.stopSpinning()
 //                                (mContext as DashboardActivity).showSnackMessage("SUCCESS")
                             (mContext as DashboardActivity).updateFence()
-                            (mContext as DashboardActivity).showSnackMessage(getString(R.string.shop_added_successfully))
+                            // code start by puja 05.04.2024 mantis id - 27333
+                            //(mContext as DashboardActivity).showSnackMessage(getString(R.string.shop_added_successfully))
+                            (mContext as DashboardActivity).showSnackMessage(mContext.getString(R.string.shop_added_successfully))
+                            // code end by puja 05.04.2024 mantis id - 27333
                             voiceAttendanceMsg(getString(R.string.shop_added_successfully))
                             //(mContext as DashboardActivity).onBackPressed()
 
@@ -2907,6 +2910,17 @@ class AddShopFragment : BaseFragment(), View.OnClickListener {
         // 1.0 AddShopFragment AppV 4.0.6  multiple contact Data added on Api called
         shopDurationData.multi_contact_name = shopActivity.multi_contact_name
         shopDurationData.multi_contact_number = shopActivity.multi_contact_number
+
+        // Suman 06-05-2024 Suman SyncActivity update mantis 27335  begin
+        try {
+            var shopOb = AppDatabase.getDBInstance()!!.addShopEntryDao().getShopByIdN(shopDurationData.shop_id)
+            shopDurationData.shop_lat=shopOb.shopLat.toString()
+            shopDurationData.shop_long=shopOb.shopLong.toString()
+            shopDurationData.shop_addr=shopOb.address.toString()
+        }catch (ex:Exception){
+            ex.printStackTrace()
+        }
+        // Suman 06-05-2024 Suman SyncActivity update mantis 27335  end
 
         shopDataList.add(shopDurationData)
 
@@ -6416,6 +6430,20 @@ class AddShopFragment : BaseFragment(), View.OnClickListener {
             simpleDialog.setCancelable(false)
             simpleDialog.getWindow()!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             simpleDialog.setContentView(R.layout.dialog_ok)
+
+            try {
+                simpleDialog.setCancelable(true)
+                simpleDialog.setCanceledOnTouchOutside(false)
+                val dialogName = simpleDialog.findViewById(R.id.tv_dialog_ok_name) as AppCustomTextView
+                val dialogCross = simpleDialog.findViewById(R.id.tv_dialog_ok_cancel) as ImageView
+                dialogName.text = AppUtils.hiFirstNameText()
+                dialogCross.setOnClickListener {
+                    simpleDialog.cancel()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
             val dialogHeader = simpleDialog.findViewById(R.id.dialog_yes_header_TV) as AppCustomTextView
             dialogHeader.text = "You are creating a ${Pref.shopText} with Duplicate Name under same ${Pref.ddText} and in the same location. Please make unique ${Pref.shopText}."
             val dialogYes = simpleDialog.findViewById(R.id.tv_dialog_yes) as AppCustomTextView

@@ -7,6 +7,12 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import android.content.Context
+import com.breezedsm.app.domain.NewOrderDataDao
+import com.breezedsm.app.domain.NewOrderDataEntity
+import com.breezedsm.app.domain.NewProductListDao
+import com.breezedsm.app.domain.NewProductListEntity
+import com.breezedsm.app.domain.NewRateListDao
+import com.breezedsm.app.domain.NewRateListEntity
 
 import com.mpcpsalesfsm.app.AppConstant.DBNAME
 import com.mpcpsalesfsm.app.domain.*
@@ -68,7 +74,8 @@ import com.mpcpsalesfsm.features.taskManagement.model.TaskManagmentEntity
         TeamAllShopDBModelEntity::class, DistWiseOrderTblEntity::class, NewGpsStatusEntity::class,ShopExtraContactEntity::class,ProductOnlineRateTempEntity::class, TaskManagmentEntity::class,
     VisitRevisitWhatsappStatus::class,CallHisEntity::class,CompanyMasterEntity::class,TypeMasterEntity::class,StatusMasterEntity::class,SourceMasterEntity::class,StageMasterEntity::class,TeamListEntity::class,
     ContactActivityEntity::class,ScheduleTemplateEntity::class,ModeTemplateEntity::class,RuleTemplateEntity::class,SchedulerMasterEntity::class,
-    SchedulerDateTimeEntity::class,SchedulerContactEntity::class),
+    SchedulerDateTimeEntity::class,SchedulerContactEntity::class,TeamAllListEntity::class,PhoneContactEntity::class,PhoneContact1Entity::class,
+    NewProductListEntity::class, NewRateListEntity::class, NewOrderDataEntity::class,NewOrderProductDataEntity::class,OpportunityStatusEntity::class,OpportunityAddEntity::class,OpportunityProductEntity::class,LmsUserInfoEntity::class),
         version = 1, exportSchema = false)
 @TypeConverters(DateConverter::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -225,6 +232,18 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun schedulerDateTimeDao(): SchedulerDateTimeDao
     abstract fun schedulerContactDao(): SchedulerContactDao
+    abstract fun teamAllListDao(): TeamAllListDao
+    abstract fun phoneContactDao(): PhoneContactDao
+    abstract fun phoneContact1Dao(): PhoneContact1Dao
+
+    abstract fun newProductListDao(): NewProductListDao
+    abstract fun newRateListDao(): NewRateListDao
+    abstract fun newOrderDataDao(): NewOrderDataDao
+    abstract fun newOrderProductDataDao(): NewOrderProductDataDao
+    abstract fun opportunityStatusDao(): OpportunityStatusDao
+    abstract fun opportunityAddDao(): OpportunityAddDao
+    abstract fun opportunityProductDao(): OpportunityProductDao
+    abstract fun lmsUserInfoDao(): LmsUserInfoDao
 
 
     companion object {
@@ -250,6 +269,7 @@ abstract class AppDatabase : RoomDatabase() {
         fun destroyInstance() {
             INSTANCE = null
         }
+
 
     }
 

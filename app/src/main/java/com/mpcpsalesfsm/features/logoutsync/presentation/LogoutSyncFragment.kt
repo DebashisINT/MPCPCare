@@ -3,6 +3,7 @@ package com.mpcpsalesfsm.features.logoutsync.presentation
 import android.app.ActivityManager
 import android.app.Dialog
 import android.app.NotificationManager
+import android.app.job.JobScheduler
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -26,6 +27,7 @@ import androidx.work.WorkManager
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
+import com.breezedsm.app.domain.NewOrderDataEntity
 import com.mpcpsalesfsm.CustomConstants
 
 
@@ -96,14 +98,25 @@ import com.mpcpsalesfsm.mappackage.SendBrod
 import com.mpcpsalesfsm.widgets.AppCustomTextView
 import com.mpcpsalesfsm.MonitorService
 import com.mpcpsalesfsm.MySingleton
+import com.mpcpsalesfsm.app.AlarmReceiver
 import com.mpcpsalesfsm.features.addshop.model.*
 import com.mpcpsalesfsm.features.addshop.model.assigntopplist.AddShopUploadImg
 import com.mpcpsalesfsm.features.addshop.presentation.ShopExtraContactReq
 import com.mpcpsalesfsm.features.addshop.presentation.multiContactRequestData
 import com.mpcpsalesfsm.features.contacts.CallHisDtls
+import com.mpcpsalesfsm.features.location.LocationFuzedService
 import com.mpcpsalesfsm.features.login.api.LoginRepositoryProvider
+import com.mpcpsalesfsm.features.login.api.opportunity.OpportunityRepoProvider
+import com.mpcpsalesfsm.features.login.api.productlistapi.ProductListRepoProvider
 import com.mpcpsalesfsm.features.login.model.GetConcurrentUserResponse
 import com.mpcpsalesfsm.features.login.model.WhatsappApiData
+import com.mpcpsalesfsm.features.orderITC.SyncDeleteOppt
+import com.mpcpsalesfsm.features.orderITC.SyncDeleteOpptL
+import com.mpcpsalesfsm.features.orderITC.SyncEditOppt
+import com.mpcpsalesfsm.features.orderITC.SyncOppt
+import com.mpcpsalesfsm.features.orderITC.SyncOpptProductL
+import com.mpcpsalesfsm.features.orderITC.SyncOrd
+import com.mpcpsalesfsm.features.orderITC.SyncOrdProductL
 import com.mpcpsalesfsm.features.performance.model.Gps_status_list
 import com.mpcpsalesfsm.features.performance.model.UpdateGpsInputListParamsModel
 import com.mpcpsalesfsm.features.returnsOrder.ReturnProductList
@@ -140,6 +153,7 @@ import kotlin.collections.ArrayList
 // 2.0 LogoutSyncFragment AppV 4.0.6 saheli 20-01-2023  Shop duartion Issue mantis 25597
 // 3.0 LogoutSyncFragment AppV 4.0.7 saheli 21-01-2023  mantis 0025685
 //4.0 LogoutSyncFragment AppV 4.1.3 saheli 03-05-2023  mantis 0026013
+//5.0 LogoutSyncFragment AppV 4.1.6 Suman 30-05-2024  mantis 0027501
 class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
 
     private lateinit var mContext: Context
@@ -707,12 +721,13 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
     //8-12-2021
     private fun syncQuesSubmit(){
         try{
+            Timber.d("tag_logout_ques syncQuesSubmit")
             var questionSubmit : AddQuestionSubmitRequestData = AddQuestionSubmitRequestData()
 
             var uniqUnsyncShopID=AppDatabase.getDBInstance()?.questionSubmitDao()?.getUnSyncUniqShopID(false)
 
             if(uniqUnsyncShopID != null && uniqUnsyncShopID.isNotEmpty() && uniqUnsyncShopID.size!=0){
-
+                Timber.d("tag_logout_ques syncQuesSubmit if")
                 questionSubmit.user_id=Pref.user_id
                 questionSubmit.session_token=Pref.session_token
                 questionSubmit.shop_id=uniqUnsyncShopID?.get(0)
@@ -749,11 +764,13 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
                                 })
                 )
             }else{
+                Timber.d("tag_logout_ques syncQuesSubmit else")
                 syncUpdatedQuesSubmit()
 //                checkToCallActivity()
             }
         }catch (ex:Exception){
             Timber.d("QuestionSubmit : ERROR " + ex.toString())
+            Timber.d("tag_logout_ques syncQuesSubmit ex")
             ex.printStackTrace()
             syncUpdatedQuesSubmit()
 //            checkToCallActivity()
@@ -766,9 +783,9 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
             var questionSubmit : AddQuestionSubmitRequestData = AddQuestionSubmitRequestData()
 
             var uniqUnsyncShopID=AppDatabase.getDBInstance()?.questionSubmitDao()?.getUnSyncUpdatedUniqShopID(false)
-
+            Timber.d("tag_logout_ques syncUpdatedQuesSubmit")
             if(uniqUnsyncShopID != null && uniqUnsyncShopID.isNotEmpty() && uniqUnsyncShopID.size!=0){
-
+                Timber.d("tag_logout_ques syncUpdatedQuesSubmit if")
                 questionSubmit.user_id=Pref.user_id
                 questionSubmit.session_token=Pref.session_token
                 questionSubmit.shop_id=uniqUnsyncShopID?.get(0)
@@ -805,11 +822,13 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
                                 })
                 )
             }else{
+                Timber.d("tag_logout_ques syncUpdatedQuesSubmit else")
                 addShopSeconaryUploadImg()
 //                checkToCallActivity()
             }
         }catch (ex:Exception){
             Timber.d("QuestionSubmit : ERROR " + ex.toString())
+            Timber.d("tag_logout_ques syncUpdatedQuesSubmit ex")
             ex.printStackTrace()
             addShopSeconaryUploadImg()
 //            checkToCallActivity()
@@ -821,10 +840,12 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
     private fun addShopSeconaryUploadImg() {
 
         println("sec-image addShopSeconaryUploadImg")
+        Timber.d("tag_logout_ques syncUpdatedQuesSubmit SecondaryShopImg1")
         var objCompetetor: AddShopUploadImg = AddShopUploadImg()
         var secondaryImgShopID=AppDatabase.getDBInstance()?.addShopSecondaryImgDao()!!.getUnsnycShopImage1(false) as ArrayList<SecondaryShopImg1>
 
         if(secondaryImgShopID != null && secondaryImgShopID.isNotEmpty() && secondaryImgShopID.size!=0){
+            Timber.d("tag_logout_ques syncUpdatedQuesSubmit SecondaryShopImg1 if")
             var shopId=secondaryImgShopID.get(0).lead_shop_id
             var imagePathupload=secondaryImgShopID.get(0).rubylead_image1
 
@@ -858,6 +879,7 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
             )
 
         }else{
+            Timber.d("tag_logout_ques syncUpdatedQuesSubmit SecondaryShopImg1 else")
             addShopSeconaryUploadImg2()
         }
 
@@ -1130,6 +1152,12 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
 
         rl_order.apply {
             visibility = if (Pref.isOrderShow)
+                View.VISIBLE
+            else
+                View.GONE
+        }
+        rl_order.apply {
+            visibility = if (Pref.ShowPartyWithCreateOrder && Pref.ShowUserwisePartyWithCreateOrder)
                 View.VISIBLE
             else
                 View.GONE
@@ -1819,6 +1847,17 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
             shopDurationData.stationCode = shopActivity.stationCode
             //End of Rev 17 DashboardActivity AppV 4.0.8 Suman    24/04/2023 distanct+station calculation 25806
 
+            // Suman 06-05-2024 Suman SyncActivity update mantis 27335  begin
+            try {
+                var shopOb = AppDatabase.getDBInstance()!!.addShopEntryDao().getShopByIdN(shopDurationData.shop_id)
+                shopDurationData.shop_lat=shopOb.shopLat.toString()
+                shopDurationData.shop_long=shopOb.shopLong.toString()
+                shopDurationData.shop_addr=shopOb.address.toString()
+            }catch (ex:Exception){
+                ex.printStackTrace()
+            }
+            // Suman 06-05-2024 Suman SyncActivity update mantis 27335  end
+
             shopDataList.add(shopDurationData)
         }
         else {
@@ -1931,6 +1970,17 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
                 shopDurationData.distFromProfileAddrKms = shopActivity.distFromProfileAddrKms
                 shopDurationData.stationCode = shopActivity.stationCode
                 //End of Rev 17 DashboardActivity AppV 4.0.8 Suman    24/04/2023 distanct+station calculation 25806
+
+                // Suman 06-05-2024 Suman SyncActivity update mantis 27335  begin
+                try {
+                    var shopOb = AppDatabase.getDBInstance()!!.addShopEntryDao().getShopByIdN(shopDurationData.shop_id)
+                    shopDurationData.shop_lat=shopOb.shopLat.toString()
+                    shopDurationData.shop_long=shopOb.shopLong.toString()
+                    shopDurationData.shop_addr=shopOb.address.toString()
+                }catch (ex:Exception){
+                    ex.printStackTrace()
+                }
+                // Suman 06-05-2024 Suman SyncActivity update mantis 27335  end
 
                 shopDataList.add(shopDurationData)
             }
@@ -2419,6 +2469,7 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
 
     private fun checkToCallSyncOrder() {
         if (Pref.isOrderShow) {
+            println("logout_ord_sync_tag old order sync inside")
             val orderList = AppDatabase.getDBInstance()!!.orderDetailsListDao().getUnsyncedData(false)
 
             val orderDetailsList = ArrayList<OrderDetailsListEntity>()
@@ -2441,7 +2492,8 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
                     addOrderSyncImg.visibility = View.GONE
 
                     if (!isRetryOrder) {
-                        checkToGpsStatus()
+                        //checkToGpsStatus()
+                        checkNewOrdSync()
                     }
                     else {
                         isRetryOrder = false
@@ -2453,14 +2505,16 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
                 addOrderSyncImg.visibility = View.GONE
 
                 if (!isRetryOrder) {
-                    checkToGpsStatus()
+                    //checkToGpsStatus()
+                    checkNewOrdSync()
                     }
                 else {
                     isRetryOrder = false
                     }
             }
         } else {
-            checkToGpsStatus()
+            //checkToGpsStatus()
+            checkNewOrdSync()
             }
     }
 
@@ -2646,7 +2700,8 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
                                         progress_wheel.stopSpinning()
                                         i = 0
                                         if (!isRetryOrder) {
-                                            checkToGpsStatus()
+                                            //checkToGpsStatus()
+                                            checkNewOrdSync()
                                         }
                                         else {
                                             isRetryOrder = false
@@ -2668,7 +2723,8 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
                                         progress_wheel.stopSpinning()
                                         i = 0
                                         if (!isRetryOrder) {
-                                            checkToGpsStatus()
+                                            //checkToGpsStatus()
+                                            checkNewOrdSync()
                                             }
                                         else {
                                             isRetryOrder = false
@@ -2700,7 +2756,8 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
                                     progress_wheel.stopSpinning()
                                     i = 0
                                     if (!isRetryOrder) {
-                                        checkToGpsStatus()
+                                        //checkToGpsStatus()
+                                        checkNewOrdSync()
                                         }
                                     else {
                                         isRetryOrder = false
@@ -2755,7 +2812,8 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
                                         progress_wheel.stopSpinning()
                                         i = 0
                                         if (!isRetryOrder) {
-                                            checkToGpsStatus()
+                                            //checkToGpsStatus()
+                                            checkNewOrdSync()
                                         }
                                         else {
                                             isRetryOrder = false
@@ -2777,7 +2835,8 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
                                         progress_wheel.stopSpinning()
                                         i = 0
                                         if (!isRetryOrder) {
-                                            checkToGpsStatus()
+                                            //checkToGpsStatus()
+                                            checkNewOrdSync()
                                             }
                                         else {
                                             isRetryOrder = false
@@ -2809,7 +2868,8 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
                                     progress_wheel.stopSpinning()
                                     i = 0
                                     if (!isRetryOrder) {
-                                        checkToGpsStatus()
+                                        //checkToGpsStatus()
+                                        checkNewOrdSync()
                                         }
                                     else {
                                         isRetryOrder = false
@@ -2821,10 +2881,285 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
     }
     //===================================================Add Order==============================================================//
 
+    // Revision 1.0   Suman App V4.4.6  04-04-2024  mantis id 27291: Sync unsync order begin
+    private fun checkNewOrdSync(){
+        if(Pref.ShowPartyWithCreateOrder && Pref.ShowUserwisePartyWithCreateOrder){
+            println("logout_ord_sync_tag new order sync inside")
+            var unsyncOrdL = AppDatabase.getDBInstance()!!.newOrderDataDao().getUnsyncList(false) as ArrayList<NewOrderDataEntity>
+            if(unsyncOrdL.size>0){
+                var ordDtls = AppDatabase.getDBInstance()!!.newOrderDataDao().getOrderByID(unsyncOrdL.get(0).order_id)
+                var ordProductDtls = AppDatabase.getDBInstance()!!.newOrderProductDataDao().getProductsOrder(unsyncOrdL.get(0).order_id)
+                var syncOrd = SyncOrd()
+                var syncOrdProductL:ArrayList<SyncOrdProductL> = ArrayList()
+                Timber.d("Order sync for order id ${unsyncOrdL.get(0).order_id}")
+                doAsync {
+                    syncOrd.user_id = Pref.user_id!!
+                    syncOrd.order_id = unsyncOrdL.get(0).order_id
+                    syncOrd.order_date = ordDtls.order_date
+                    syncOrd.order_time = ordDtls.order_time
+                    syncOrd.order_date_time = ordDtls.order_date_time
+                    syncOrd.shop_id = ordDtls.shop_id
+                    syncOrd.shop_name = ordDtls.shop_name
+                    syncOrd.shop_type = ordDtls.shop_type
+                    syncOrd.isInrange = if(ordDtls.isInrange) 1 else 0
+                    syncOrd.order_lat = ordDtls.order_lat
+                    syncOrd.order_long = ordDtls.order_long
+                    syncOrd.shop_addr = ordDtls.shop_addr
+                    syncOrd.shop_pincode = ordDtls.shop_pincode
+                    syncOrd.order_total_amt = ordDtls.order_total_amt.toDouble()
+                    syncOrd.order_remarks = ordDtls.order_remarks
+
+                    for(i in 0..ordProductDtls.size-1){
+                        var obj = SyncOrdProductL()
+                        obj.order_id=ordProductDtls.get(i).order_id
+                        obj.product_id=ordProductDtls.get(i).product_id
+                        obj.product_name=ordProductDtls.get(i).product_name
+                        obj.submitedQty=ordProductDtls.get(i).submitedQty.toDouble()
+                        obj.submitedSpecialRate=ordProductDtls.get(i).submitedSpecialRate.toDouble()
+
+                        syncOrdProductL.add(obj)
+                    }
+                    syncOrd.product_list = syncOrdProductL
+
+                    uiThread {
+                        val repository = ProductListRepoProvider.productListProvider()
+                        BaseActivity.compositeDisposable.add(
+                            repository.syncProductListITC(syncOrd)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribeOn(Schedulers.io())
+                                .subscribe({ result ->
+                                    val response = result as BaseResponse
+                                    Timber.d("Order sync status ${response.status}")
+                                    if (response.status == NetworkConstant.SUCCESS) {
+                                        doAsync {
+                                            AppDatabase.getDBInstance()!!.newOrderDataDao().updateIsUploaded(syncOrd.order_id,true)
+                                            uiThread {
+                                                checkNewOrdSync()
+                                            }
+                                        }
+                                    } else {
+                                        Timber.d("Order sync else status ${response.status}")
+                                        tv_order_retry.visibility = View.VISIBLE
+                                        addOrderTickImg.visibility = View.GONE
+                                        addOrderSyncImg.visibility = View.GONE
+                                        stopAnimation(addOrderSyncImg)
+                                        syncDeleteOpptL()
+                                    }
+                                }, { error ->
+                                    Timber.d("Order sync else err ${error.message}")
+                                    tv_order_retry.visibility = View.VISIBLE
+                                    addOrderTickImg.visibility = View.GONE
+                                    addOrderSyncImg.visibility = View.GONE
+                                    stopAnimation(addOrderSyncImg)
+                                    syncDeleteOpptL()
+                                })
+                        )
+                    }
+                }
+            }else{
+                Timber.d("Order sync no order found to sync")
+                addOrderTickImg.visibility = View.VISIBLE
+                addOrderSyncImg.visibility = View.GONE
+                tv_order_retry.visibility = View.GONE
+                stopAnimation(addOrderSyncImg)
+                syncDeleteOpptL()
+            }
+        }else{
+            Timber.d("Order sync no order feature")
+            addOrderTickImg.visibility = View.VISIBLE
+            addOrderSyncImg.visibility = View.GONE
+            tv_order_retry.visibility = View.GONE
+            stopAnimation(addOrderSyncImg)
+            syncDeleteOpptL()
+        }
+    }
+    // Revision 1.0   Suman App V4.4.6  04-04-2024  mantis id 27291: Sync unsync order end
+
+    private fun syncDeleteOpptL() {
+        if (Pref.IsShowCRMOpportunity) {
+            var unsyncOpptL = AppDatabase.getDBInstance()!!.opportunityAddDao().getUnsyncDeleteL(true) as ArrayList<OpportunityAddEntity>
+            if (unsyncOpptL.size > 0) {
+                var syncObj: SyncDeleteOppt = SyncDeleteOppt()
+                syncObj.user_id = Pref.user_id.toString()
+                syncObj.session_token = Pref.session_token.toString()
+                for (i in 0..unsyncOpptL.size - 1) {
+                    syncObj.opportunity_delete_list.add(SyncDeleteOpptL(unsyncOpptL.get(i).opportunity_id))
+                }
+                val repository = OpportunityRepoProvider.opportunityListRepo()
+                BaseActivity.compositeDisposable.add(
+                    repository.deleteOpportunity(syncObj)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe({ result ->
+                            val response = result as BaseResponse
+                            if (response.status == NetworkConstant.SUCCESS) {
+                                for (i in 0..syncObj.opportunity_delete_list.size - 1) {
+                                    AppDatabase.getDBInstance()!!.opportunityAddDao()
+                                        .deleteOpportunityById(syncObj.opportunity_delete_list.get(i).opportunity_id)
+                                    AppDatabase.getDBInstance()!!.opportunityProductDao()
+                                        .deleteOprtntyById(syncObj.opportunity_delete_list.get(i).opportunity_id)
+                                }
+                                syncAddOpportunity()
+                            } else {
+                                syncAddOpportunity()
+                            }
+                        }, { error ->
+                            syncAddOpportunity()
+                        })
+                )
+            } else {
+                syncAddOpportunity()
+            }
+        }else{
+            syncAddOpportunity()
+        }
+    }
+
+    private fun syncAddOpportunity() {
+        if (Pref.IsShowCRMOpportunity) {
+            val addedOpptlist = AppDatabase.getDBInstance()!!.opportunityAddDao().getUnsyncAddOpptL(false)
+            if (addedOpptlist.size > 0) {
+                var opprDtls = AppDatabase.getDBInstance()!!.opportunityAddDao()
+                    .getSingleOpportunityL(addedOpptlist.get(0).opportunity_id)
+                var opptProductDtls = AppDatabase.getDBInstance()!!.opportunityProductDao().getOpportunityPrdctL(addedOpptlist.get(0).opportunity_id)
+                var opptProductL: ArrayList<SyncOpptProductL> = ArrayList()
+
+                var syncObj: SyncOppt = SyncOppt()
+                syncObj.user_id = Pref.user_id.toString()
+                syncObj.session_token = Pref.session_token.toString()
+                syncObj.shop_id = opprDtls.shop_id
+                syncObj.shop_name = opprDtls.shop_name
+                syncObj.shop_type = opprDtls.shop_type
+                syncObj.opportunity_id = addedOpptlist.get(0).opportunity_id
+                syncObj.opportunity_description = opprDtls.opportunity_description
+                if (opprDtls.opportunity_amount.equals("")) {
+                    syncObj.opportunity_amount = "0"
+                } else {
+                    syncObj.opportunity_amount = opprDtls.opportunity_amount
+                }
+                syncObj.opportunity_status_id = opprDtls.opportunity_status_id
+                syncObj.opportunity_status_name = opprDtls.opportunity_status_name
+                syncObj.opportunity_created_date = opprDtls.opportunity_created_date
+                syncObj.opportunity_created_time = opprDtls.opportunity_created_time
+                syncObj.opportunity_created_date_time = opprDtls.opportunity_created_date_time
+                if (opptProductDtls.size > 0) {
+                    for (l in 0..opptProductDtls.size - 1) {
+                        var obj: SyncOpptProductL = SyncOpptProductL()
+                        obj.opportunity_id = opptProductDtls.get(l).opportunity_id
+                        obj.shop_id = opptProductDtls.get(l).shop_id
+                        obj.product_id = opptProductDtls.get(l).product_id
+                        obj.product_name = opptProductDtls.get(l).product_name
+
+                        opptProductL.add(obj)
+                    }
+                    syncObj.opportunity_product_list = opptProductL
+
+                } else {
+                    syncObj.opportunity_product_list = ArrayList()
+                }
+
+                val repository = OpportunityRepoProvider.opportunityListRepo()
+                BaseActivity.compositeDisposable.add(
+                    repository.saveOpportunity(syncObj)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe({ result ->
+                            val response = result as BaseResponse
+                            if (response.status == NetworkConstant.SUCCESS) {
+                                AppDatabase.getDBInstance()!!.opportunityAddDao()
+                                    .updateIsUploaded(syncObj.opportunity_id, true)
+                                syncAddOpportunity()
+                            } else {
+                                syncEditOppt()
+                            }
+                        }, { error ->
+                            syncEditOppt()
+                        })
+                )
+
+            } else {
+                syncEditOppt()
+            }
+
+        }else{
+            syncEditOppt()
+        }
+    }
+
+    private fun syncEditOppt() {
+        if (Pref.IsShowCRMOpportunity) {
+            val addedOpptlist = AppDatabase.getDBInstance()!!.opportunityAddDao().getUnsyncEditedL(true)
+            if (addedOpptlist.size > 0) {
+                var opprEdDtls = AppDatabase.getDBInstance()!!.opportunityAddDao().getSingleOpportunityL(addedOpptlist.get(0).opportunity_id)
+                var opptEdProductDtls = AppDatabase.getDBInstance()!!.opportunityProductDao().getOpportunityPrdctL(addedOpptlist.get(0).opportunity_id)
+                var opptEdProductL: ArrayList<SyncOpptProductL> = ArrayList()
+                var syncObj : SyncEditOppt = SyncEditOppt()
+                syncObj.user_id = Pref.user_id.toString()
+                syncObj.session_token = Pref.session_token.toString()
+                syncObj.shop_id = opprEdDtls.shop_id
+                syncObj.shop_name = opprEdDtls.shop_name
+                syncObj.shop_type = opprEdDtls.shop_type
+                syncObj.opportunity_id = opprEdDtls.opportunity_id
+                syncObj.opportunity_description = opprEdDtls.opportunity_description
+                if (opprEdDtls.opportunity_amount.equals("")) {
+                    syncObj.opportunity_amount = "0"
+                }else {
+                    syncObj.opportunity_amount = opprEdDtls.opportunity_amount
+                }
+                syncObj.opportunity_status_id = opprEdDtls.opportunity_status_id
+                syncObj.opportunity_status_name = opprEdDtls.opportunity_status_name
+                syncObj.opportunity_created_date = opprEdDtls.opportunity_created_date
+                syncObj.opportunity_created_time = opprEdDtls.opportunity_created_time
+                syncObj.opportunity_created_date_time = opprEdDtls.opportunity_created_date_time
+                syncObj.opportunity_edited_date_time = opprEdDtls.opportunity_edited_date_time
+                if (opptEdProductDtls.size>0){
+                    for (l in 0..opptEdProductDtls.size - 1) {
+                        var obj : SyncOpptProductL = SyncOpptProductL()
+                        obj.opportunity_id = opprEdDtls.opportunity_id
+                        obj.shop_id = opprEdDtls.shop_id
+                        obj.product_id = opptEdProductDtls.get(l).product_id
+                        obj.product_name = opptEdProductDtls.get(l).product_name
+
+                        opptEdProductL.add(obj)
+                    }
+                    syncObj.edit_opportunity_product_list = opptEdProductL
+
+                }else{
+                    syncObj.edit_opportunity_product_list = ArrayList()
+                }
+
+
+                val repository = OpportunityRepoProvider.opportunityListRepo()
+                BaseActivity.compositeDisposable.add(
+                    repository.editOpportunity(syncObj)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe({ result ->
+                            val response = result as BaseResponse
+                            if (response.status == NetworkConstant.SUCCESS) {
+                                AppDatabase.getDBInstance()!!.opportunityAddDao().updateIsEditUploaded(false,syncObj.opportunity_id)
+                                syncEditOppt()
+                            } else {
+                                checkToGpsStatus()
+                            }
+                        }, { error ->
+                            checkToGpsStatus()
+                        })
+                )
+
+            }else{
+                checkToGpsStatus()
+            }
+
+        }else{
+            checkToGpsStatus()
+        }
+
+    }
 
     private fun checkToGpsStatus() {
         val list = AppDatabase.getDBInstance()!!.gpsStatusDao().getDataSyncStateWise(false)
-
+        println("logout_ord_sync_tag checkToGpsStatus sync inside")
         if (list != null && list.isNotEmpty()) {
             i = 0
             callUpdateGpsStatusApi(list)
@@ -3567,6 +3902,17 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
                         shopDurationData.stationCode = shopActivity.stationCode
                         //End of Rev 17 DashboardActivity AppV 4.0.8 Suman    24/04/2023 distanct+station calculation 25806
 
+                        // Suman 06-05-2024 Suman SyncActivity update mantis 27335  begin
+                        try {
+                            var shopOb = AppDatabase.getDBInstance()!!.addShopEntryDao().getShopByIdN(shopDurationData.shop_id)
+                            shopDurationData.shop_lat=shopOb.shopLat.toString()
+                            shopDurationData.shop_long=shopOb.shopLong.toString()
+                            shopDurationData.shop_addr=shopOb.address.toString()
+                        }catch (ex:Exception){
+                            ex.printStackTrace()
+                        }
+                        // Suman 06-05-2024 Suman SyncActivity update mantis 27335  end
+
                         shopDataList.add(shopDurationData)
 
 
@@ -3676,6 +4022,17 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
                         shopDurationData.distFromProfileAddrKms = it.distFromProfileAddrKms
                         shopDurationData.stationCode = it.stationCode
                         //End of Rev 17 DashboardActivity AppV 4.0.8 Suman    24/04/2023 distanct+station calculation 25806
+
+                        // Suman 06-05-2024 Suman SyncActivity update mantis 27335  begin
+                        try {
+                            var shopOb = AppDatabase.getDBInstance()!!.addShopEntryDao().getShopByIdN(shopDurationData.shop_id)
+                            shopDurationData.shop_lat=shopOb.shopLat.toString()
+                            shopDurationData.shop_long=shopOb.shopLong.toString()
+                            shopDurationData.shop_addr=shopOb.address.toString()
+                        }catch (ex:Exception){
+                            ex.printStackTrace()
+                        }
+                        // Suman 06-05-2024 Suman SyncActivity update mantis 27335  end
 
                         shopDataList.add(shopDurationData)
 
@@ -6036,6 +6393,7 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
                         }
                     }, { error ->
                         error.printStackTrace()
+
                         Timber.d("syncCallHisInfo:==>"+error.message.toString())
 
                         checkToCallActivity()
@@ -6065,8 +6423,21 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
             WorkManager.getInstance(mContext).cancelAllWork()
             WorkManager.getInstance(mContext).cancelAllWorkByTag("workerTag")
             Timber.d("Logout Sync workerservice status : " + isWorkerRunning("workerTag").toString())
+
+            //new code to stop service begin
+            val serviceLauncher = Intent(mContext, LocationFuzedService::class.java)
+            mContext.stopService(serviceLauncher)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val jobScheduler = mContext.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+                jobScheduler.cancelAll()
+                Timber.e("MID: 26980 in serviceStatusActionable method if user_id is null,Job scheduler cancel")
+                Timber.d("===============================Job scheduler cancel" + AppUtils.getCurrentDateTime() + "============================")
+            }
+            AlarmReceiver.stopServiceAlarm(mContext, 123)
+            //new code to stop service begin
         }catch (ex:Exception){
             ex.printStackTrace()
+            Timber.e("err logout ${ex.printStackTrace()}")
         }
 
         if (Pref.willActivityShow) {
@@ -6083,7 +6454,10 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
             tv_activity_retry.visibility = View.GONE
             activity_sync_img.visibility = View.GONE
 
-            take_photo_tv.text = getString(R.string.data_sync_completed)
+            // code start bt puja 23.03.2024 mantis id - 27333 v4.2.6
+            //  take_photo_tv.text = getString(R.string.data_sync_completed)
+            take_photo_tv.text = mContext.getString(R.string.data_sync_completed)
+            // code end bt puja 23.03.2024 mantis id - 27333 v4.2.6
             if (!(mContext as DashboardActivity).isChangedPassword) {
                 if ((mContext as DashboardActivity).isClearData) {
                     Handler().postDelayed(Runnable {
@@ -6777,7 +7151,7 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
                     {
                         override fun getParams(): Map<String, String>? {
                             val params: MutableMap<String, String> = HashMap()
-                            params.put("userId", "eurobondwa")
+                            params.put("userid", "eurobondwa")
                             params.put("password", "Eurobondwa@123")
                             params.put("wabaNumber", "917888488891")
                             params.put("fromDate", "${AppUtils.getCurrentDateForShopActi()}")
@@ -6868,6 +7242,37 @@ class LogoutSyncFragment : BaseFragment(), View.OnClickListener {
             distance = Pref.tempDistance.toDouble() + totalDistance
         } else
             distance = Pref.tempDistance.toDouble()
+
+        //logout distance calculation mantis id 27259 Suman 20-02-2023 begin
+        //val allLocationList = AppDatabase.getDBInstance()!!.userLocationDataDao().getLocationUpdateForADay(AppUtils.getCurrentDateForShopActi()) as ArrayList<UserLocationDataEntity>
+        //val allLocationList = AppDatabase.getDBInstance()!!.userLocationDataDao().getLocationUpdateForADayNotSyn(AppUtils.getCurrentDateForShopActi(), true) as ArrayList<UserLocationDataEntity>
+        //Suman 09-07-2024 mantis id 27482
+        val allLocationList = AppDatabase.getDBInstance()!!.userLocationDataDao().getLocationUpdateForADayNotSynOrderDesc(AppUtils.getCurrentDateForShopActi(), true) as ArrayList<UserLocationDataEntity>
+        if(allLocationList.size > 0){
+            //var prevObj = allLocationList.get(allLocationList.size-1)
+            var prevObj = allLocationList.get(0)
+            distance = LocationWizard.getDistance(prevObj.latitude.toDouble(),prevObj.longitude.toDouble(),
+                Pref.logout_latitude.toDouble(),Pref.logout_longitude.toDouble()).toDouble()
+
+            //5.0 LogoutSyncFragment AppV 4.1.6 Suman 30-05-2024  mantis 0027501 begin
+            try {
+                if(Pref.logout_latitude.toDouble() == 0.0 || Pref.logout_longitude.toDouble() == 0.0){
+                    distance = 0.0
+                    Pref.logout_latitude = Pref.current_latitude
+                    Pref.logout_longitude = Pref.current_longitude
+                }
+                Timber.d("logout lat-lon found  ${Pref.logout_latitude.toString()} ${Pref.logout_longitude.toString()}")
+            } catch (e: Exception) {
+                Timber.d("error ${e.printStackTrace()}")
+            }
+            //5.0 LogoutSyncFragment AppV 4.1.6 Suman 30-05-2024  mantis 0027501 end
+            //distance = distance + Pref.tempDistance.toDouble()
+            Timber.d("dist ${distance.toString()} temp_dist ${Pref.tempDistance.toString()}")
+        }else{
+            distance = Pref.tempDistance.toDouble()
+            Timber.d("dist else ${distance.toString()} temp_dist ${Pref.tempDistance.toString()}")
+        }
+        //logout distance xalculation mantis id 27259 Suman 20-02-2023 end
 
 
         var location = ""

@@ -3,10 +3,15 @@ package com.mpcpsalesfsm.features.login.api.productlistapi
 import com.mpcpsalesfsm.app.Pref
 import com.mpcpsalesfsm.app.domain.ProductListEntity
 import com.mpcpsalesfsm.app.utils.AppUtils
+import com.mpcpsalesfsm.base.BaseResponse
 import com.mpcpsalesfsm.features.login.model.productlistmodel.ProductListOfflineResponseModel
 import com.mpcpsalesfsm.features.login.model.productlistmodel.ProductListOfflineResponseModelNew
 import com.mpcpsalesfsm.features.login.model.productlistmodel.ProductListResponseModel
 import com.mpcpsalesfsm.features.login.model.productlistmodel.ProductRateListResponseModel
+import com.mpcpsalesfsm.features.orderITC.GetOrderHistory
+import com.mpcpsalesfsm.features.orderITC.GetProductRateReq
+import com.mpcpsalesfsm.features.orderITC.GetProductReq
+import com.mpcpsalesfsm.features.orderITC.SyncOrd
 import com.mpcpsalesfsm.features.viewAllOrder.orderOptimized.ProductRateOnlineListResponseModel
 import io.reactivex.Observable
 import timber.log.Timber
@@ -38,4 +43,22 @@ class ProductListRepo(val apiService: ProductListApi) {
     fun getProductRateOfflineListNew(): Observable<ProductListOfflineResponseModelNew> {
         return apiService.getOfflineProductRateListNew(Pref.session_token!!, Pref.user_id!!)
     }
+
+    fun syncProductListITC(obj: SyncOrd): Observable<BaseResponse> {
+        return apiService.syncProductListITC(obj)
+    }
+
+    fun getProductListITC(session_token: String, user_id: String): Observable<GetProductReq> {
+        return apiService.getProductListITC(session_token, user_id)
+    }
+
+    fun getProductRateListITC(session_token: String, user_id: String): Observable<GetProductRateReq> {
+        return apiService.getProductRateListITC(session_token, user_id)
+    }
+
+    fun getOrderHistory(user_id:String): Observable<GetOrderHistory> {
+        return apiService.getOrderHistoryApi(user_id)
+    }
+
+
 }

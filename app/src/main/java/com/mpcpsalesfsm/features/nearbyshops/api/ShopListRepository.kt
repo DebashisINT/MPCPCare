@@ -1,12 +1,14 @@
 package com.mpcpsalesfsm.features.nearbyshops.api
 
 import com.mpcpsalesfsm.app.Pref
+import com.mpcpsalesfsm.app.utils.AppUtils
 import com.mpcpsalesfsm.base.BaseResponse
 import com.mpcpsalesfsm.features.login.model.GetQtsAnsSubmitDtlsResponseModel
 import com.mpcpsalesfsm.features.login.model.GetSecImageUploadResponseModel
 import com.mpcpsalesfsm.features.login.model.productlistmodel.ModelListResponse
 import com.mpcpsalesfsm.features.nearbyshops.model.*
 import io.reactivex.Observable
+import timber.log.Timber
 
 /**
  * Created by Pratishruti on 28-11-2017.
@@ -77,6 +79,7 @@ class ShopListRepository(val apiService: ShopListApi) {
     }
 
     fun deleteImei(): Observable<BaseResponse> {
+        Timber.d("deleteImei Repo" + AppUtils.getCurrentDateTime())
         return apiService.deleteImeiAPI(Pref.session_token!!, Pref.user_id!!)
     }
 
