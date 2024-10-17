@@ -1737,7 +1737,7 @@ val revisitStatusList : MutableList<ShopRevisitStatusRequestData> = ArrayList()
         BaseActivity.isShopActivityUpdating = true
 /////////////
         revisitStatusList.clear()
-        for(i in 0..shopDataList?.size-1){
+        for(i in 0..shopDataList?.size!!-1){
             var data=AppDatabase.getDBInstance()?.shopVisitOrderStatusRemarksDao()!!.getSingleItem(shopDataList?.get(i)?.shop_revisit_uniqKey!!.toString())
             if(data!=null ){
                 var revisitStatusObj= ShopRevisitStatusRequestData()
@@ -1772,7 +1772,7 @@ val revisitStatusList : MutableList<ShopRevisitStatusRequestData> = ArrayList()
                                 if(!revisitStatusList.isEmpty()){
                                     callRevisitStatusUploadApi(revisitStatusList!!)
                                 }
-                                for(i in 0..shopDataList?.size-1){
+                                for(i in 0..shopDataList?.size!!-1){
                                     callCompetetorImgUploadApi(shopDataList?.get(i)?.shop_id!!)
                                 }
 
@@ -2006,7 +2006,7 @@ val revisitStatusList : MutableList<ShopRevisitStatusRequestData> = ArrayList()
         ////////
         revisitStatusList.clear()
         var key:String = ""
-        for(i in 0..list_?.size-1){
+        for(i in 0..list_?.size!!-1){
             if(list_.get(i).shopid.equals(shopId)){
                 key=list_.get(i).shop_revisit_uniqKey!!.toString()
             }

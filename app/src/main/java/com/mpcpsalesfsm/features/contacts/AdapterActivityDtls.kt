@@ -79,7 +79,7 @@ class AdapterActivityDtls(var mContext: Context,var mList:ArrayList<ActivityEnti
                     }
 
                     iv_row_activity_view.setOnClickListener {
-                        listner.onViewClick(mList?.get(adapterPosition))
+                        listner.onViewClick(mList?.get(adapterPosition)!!)
                     }
 
                 }catch (ex:Exception){

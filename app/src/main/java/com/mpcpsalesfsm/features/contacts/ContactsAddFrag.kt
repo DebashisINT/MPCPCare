@@ -1747,7 +1747,7 @@ class ContactsAddFrag : BaseFragment(), View.OnClickListener {
             override fun afterTextChanged(p0: Editable?) {
                 var str = p0.toString()
                 if(str.length>1){
-                    adapterCompanyNameHint?.filter.filter(str)
+                    adapterCompanyNameHint?.filter!!.filter(str)
                     rv_companyNameHint.visibility = View.VISIBLE
                 }else{
                     rv_companyNameHint.visibility = View.GONE
